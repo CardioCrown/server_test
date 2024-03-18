@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'client.dart';
+import 'client.dart'; // Make sure this path is correct
 import 'server.dart';
 
 void main() {
@@ -15,8 +15,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: WebSocketClient(),
+    return MaterialApp(
+      home: WebRTCViewer(), // Ensure this class is correctly defined in client.dart
       debugShowCheckedModeBanner: false,
     );
   }

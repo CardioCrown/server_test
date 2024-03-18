@@ -1,9 +1,18 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 class WebSocketServer {
   HttpServer? _server;
   final _clients = <WebSocket>[];
+
+  void broadcast(String message, WebSocket from) {
+    for (final client in _clients) {
+      if (client != from) {
+        client.add(message);
+      }
+    }
+  }
 
   Future<void> start() async {
     _server = await HttpServer.bind('192.168.8.112', 8080);
@@ -14,12 +23,9 @@ class WebSocketServer {
         _clients.add(socket);
         print('New client connected');
         socket.listen((data) {
-          // Here, just forward every message to every connected client
-          for (var client in _clients) {
-            if (client != socket) { // Don't send the message back to the sender
-              client.add(data);
-            }
-          }
+          print('Data received: $data');
+          // Broadcast the received message to all other connected clients
+          broadcast(data, socket);
         }, onDone: () {
           _clients.remove(socket);
           print('Client disconnected');
