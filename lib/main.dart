@@ -7,13 +7,15 @@ void main() {
   final server = WebSocketServer();
   server.start();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: WebSocketClient(),
       debugShowCheckedModeBanner: false,
     );
