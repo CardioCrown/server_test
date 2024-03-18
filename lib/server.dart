@@ -6,7 +6,8 @@ class WebSocketServer {
   final _clients = <WebSocket>[];
 
   Future<void> start() async {
-    _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 8080);
+    // Bind the server to the specified IP address and port
+    _server = await HttpServer.bind('192.168.8.112', 8080);
     _server!.listen((HttpRequest req) async {
       if (WebSocketTransformer.isUpgradeRequest(req)) {
         WebSocket socket = await WebSocketTransformer.upgrade(req);

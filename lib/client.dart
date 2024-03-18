@@ -19,7 +19,7 @@ class _WebSocketClientState extends State<WebSocketClient> {
   }
 
   void _connectToServer() {
-    _channel = IOWebSocketChannel.connect('ws://127.0.0.1:8080');
+    _channel = IOWebSocketChannel.connect('ws://192.168.8.112:8080');
     _channel!.stream.listen((message) {
       print(message);
     }, onDone: () {
