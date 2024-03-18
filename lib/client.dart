@@ -28,7 +28,6 @@ class _WebRTCViewerState extends State<WebRTCViewer> {
   }
 
   void _connectToSignalingServer() {
-    // Connect to your signaling server
     _channel = IOWebSocketChannel.connect('ws://192.168.8.112:8080');
     _channel!.stream.listen((message) {
       final parsedMessage = jsonDecode(message);
@@ -38,9 +37,7 @@ class _WebRTCViewerState extends State<WebRTCViewer> {
 
   Future<void> _setupPeerConnection() async {
     final Map<String, dynamic> configuration = {
-      "iceServers": [
-        {"urls": "stun:stun.l.google.com:19302"},
-      ]
+      "iceServers": [] // Omitting ICE servers
     };
 
     _peerConnection = await createPeerConnection(configuration);
@@ -51,7 +48,6 @@ class _WebRTCViewerState extends State<WebRTCViewer> {
       }
     };
 
-    // Handle ICE candidates
     _peerConnection!.onIceCandidate = (candidate) {
       _channel!.sink.add(jsonEncode({
         'type': 'candidate',
@@ -61,27 +57,14 @@ class _WebRTCViewerState extends State<WebRTCViewer> {
   }
 
   void _handleSignalingMessage(dynamic message) async {
-    if (message['type'] == 'offer') {
-      await _peerConnection!.setRemoteDescription(
-        RTCSessionDescription(message['sdp'], message['type']),
-      );
-      final answer = await _peerConnection!.createAnswer();
-      await _peerConnection!.setLocalDescription(answer);
-      _sendSignalingMessage({'type': 'answer', 'sdp': answer.sdp});
-    } else if (message['type'] == 'candidate') {
-      _peerConnection!.addCandidate(
-        RTCIceCandidate(
-          message['candidate']['candidate'],
-          message['candidate']['sdpMid'],
-          message['candidate']['sdpMLineIndex'],
-        ),
-      );
-    }
-    // Handle other signaling messages as needed
+    // Handling signaling messages...
   }
 
-  void _sendSignalingMessage(dynamic message) {
-    _channel!.sink.add(jsonEncode(message));
+  void _sendTestMessage() {
+    if (_channel != null) {
+      _channel!.sink.add('Test');
+      print('Test message sent to the server');
+    }
   }
 
   @override
@@ -95,7 +78,13 @@ class _WebRTCViewerState extends State<WebRTCViewer> {
           Expanded(
             child: RTCVideoView(_localRenderer, mirror: true),
           ),
-          // You can add more UI components here as needed
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: _sendTestMessage,
+              child: const Text('Send Test'),
+            ),
+          ),
         ],
       ),
     );
